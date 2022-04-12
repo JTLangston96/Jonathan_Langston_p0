@@ -6,6 +6,7 @@ import dev.langst.entities.Account;
 import dev.langst.entities.AccountDAOPostgres;
 import dev.langst.entities.Customer;
 import dev.langst.entities.CustomerDAOPostgres;
+import dev.langst.utilities.List;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 
@@ -41,6 +42,19 @@ public class AccountDAOTests {
         Account fetchedAccount = accountDAO.getAccountById(targetId);
 
         Assertions.assertEquals(targetId, fetchedAccount.getAccountId());
+    }
+
+    @Test
+    @Order(3)
+    void get_account_userId_test(){
+        int userId = customer.getId();
+
+        List<Account> accounts = accountDAO.getAccountsByUserId(userId);
+
+        for(int i = 0; i < accounts.size(); i++){
+            Assertions.assertEquals(userId, accounts.get(i).getUserId());
+        }
+
     }
 
     @Test

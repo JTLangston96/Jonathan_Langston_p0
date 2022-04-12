@@ -12,4 +12,6 @@ public interface CustomerService {
 
     Customer updateInfo(Customer customer);
 
+    boolean isUniqueUsername(String username);
+
 }

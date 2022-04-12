@@ -50,9 +50,16 @@ public class CustomerServiceTests {
 
         Assertions.assertEquals(newName, customer.getFirstName());
     }
-
     @Test
     @Order(4)
+    void unique_username_test(){
+        String username = RandomStringUtils.randomAlphanumeric(8);
+
+        Assertions.assertTrue(customerService.isUniqueUsername(username));
+    }
+
+    @Test
+    @Order(5)
     void delete_user_test(){
 
         Assertions.assertTrue(customerService.deleteUser(customer));

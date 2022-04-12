@@ -1,9 +1,7 @@
 package dev.langst.entities;
 
 import dev.langst.data.AccountDAO;
-import dev.langst.utilities.ConnectionUtil;
-import dev.langst.utilities.LogLevel;
-import dev.langst.utilities.Logger;
+import dev.langst.utilities.*;
 
 import java.sql.*;
 
@@ -57,6 +55,36 @@ public class AccountDAOPostgres implements AccountDAO {
         }
         catch(SQLException e){
             e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    @Override
+    public Arraylist<Account> getAccountsByUserId(int userId) {
+
+        try{
+            Arraylist<Account> accounts = new Arraylist();
+
+            Connection conn = ConnectionUtil.createConnection();
+            String sql = "select account_id, account_type, balance from account inner join customer on customer.customer_id = ?;";
+            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+
+            ps.setInt(1, userId);
+            ps.execute();
+
+            ResultSet rs = ps.getResultSet();
+            rs.next();
+
+            for(int i = 0; rs.next(); i++){
+                Account currentAccount = new Account(rs.getInt("account_id"), userId,
+                        rs.getString("account_type"), rs.getDouble("balance"));
+                accounts.add(currentAccount);
+            }
+            return accounts;
+        }
+        catch(SQLException e){
+
         }
 
         return null;

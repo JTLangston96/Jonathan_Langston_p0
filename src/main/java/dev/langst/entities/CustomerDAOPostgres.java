@@ -4,6 +4,7 @@ import dev.langst.data.CustomerDAO;
 import dev.langst.utilities.ConnectionUtil;
 import dev.langst.utilities.LogLevel;
 import dev.langst.utilities.Logger;
+import org.postgresql.util.PSQLException;
 import sun.rmi.runtime.Log;
 
 import javax.swing.plaf.nimbus.State;
@@ -66,7 +67,6 @@ public class CustomerDAOPostgres implements CustomerDAO {
 
         }
         catch(SQLException e){
-            e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
             return null;
         }
@@ -101,7 +101,6 @@ public class CustomerDAOPostgres implements CustomerDAO {
             return result;
         }
         catch (SQLException e){
-            e.printStackTrace();
             Logger.log(e.getMessage(), LogLevel.ERROR);
             return null;
         }

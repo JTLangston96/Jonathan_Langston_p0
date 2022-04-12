@@ -8,6 +8,7 @@ import dev.langst.services.AccountService;
 import dev.langst.services.AccountServiceImpl;
 import dev.langst.services.CustomerService;
 import dev.langst.services.CustomerServiceImpl;
+import dev.langst.utilities.List;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 
@@ -44,6 +45,16 @@ public class AccountServiceTests {
 
     @Test
     @Order(3)
+    void test_get_accounts_userId(){
+        List<Account> accounts = accountService.retrieveAccounts(customer.getId());
+
+        for(int i = 0; i < accounts.size(); i++){
+            Assertions.assertEquals(customer.getId(), accounts.get(i).getUserId());
+        }
+    }
+
+    @Test
+    @Order(4)
     void test_close_account(){
 
         boolean result = accountService.closeAccount(account);

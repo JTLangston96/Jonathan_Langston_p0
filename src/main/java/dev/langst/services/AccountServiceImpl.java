@@ -2,6 +2,7 @@ package dev.langst.services;
 
 import dev.langst.data.AccountDAO;
 import dev.langst.entities.Account;
+import dev.langst.utilities.List;
 
 public class AccountServiceImpl implements AccountService{
 
@@ -32,4 +33,15 @@ public class AccountServiceImpl implements AccountService{
             return account;
         }
     }
+
+    @Override
+    public List<Account> retrieveAccounts(int userId) {
+        List<Account> accounts;
+
+        accounts = accountDAO.getAccountsByUserId(userId);
+
+        return accounts;
+    }
+
+
 }

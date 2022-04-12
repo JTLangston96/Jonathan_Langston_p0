@@ -19,7 +19,9 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer loginUser(String username, String password) {
         Customer user = customerDAO.getCustomerByUsername(username);
-
+        if(user == null){
+            return user;
+        }
         if(user.getPassword().equals(password)){
             return user;
         }
@@ -35,5 +37,15 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public Customer updateInfo(Customer customer) {
         return customerDAO.updateCustomer(customer);
+    }
+
+    @Override
+    public boolean isUniqueUsername(String username) {
+
+        if(customerDAO.getCustomerByUsername(username) == null){
+            return true;
+        }
+
+        return false;
     }
 }
