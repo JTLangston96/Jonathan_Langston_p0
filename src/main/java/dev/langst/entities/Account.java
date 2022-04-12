@@ -46,4 +46,9 @@ public class Account {
         this.balance = balance;
     }
 
+    @Override
+    public String toString() {
+        return "[" + this.getAccountId() + "] " +
+                this.getAccountType() + " " + this.getBalance();
+    }
 }

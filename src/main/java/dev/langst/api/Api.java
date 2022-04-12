@@ -10,7 +10,6 @@ import dev.langst.services.CustomerService;
 import dev.langst.services.CustomerServiceImpl;
 import dev.langst.utilities.List;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Api {
@@ -37,12 +36,10 @@ public class Api {
             switch (choice) {
                 case "1": {
                     loginMenu();
-                    showOptions = false;
                     break;
                 }
                 case "2": {
                     registerMenu();
-                    showOptions = false;
                     break;
                 }
                 case "3": {
@@ -76,7 +73,7 @@ public class Api {
             }
             else{
                 System.out.println("Invalid Credentials!");
-                System.out.println("Would you like to exit the program? [Y/N]");
+                System.out.println("Would you like to return to the previous menu? [Y/N]");
 
                 if(scanner.nextLine().compareToIgnoreCase("Y") == 0){
                     showOptions = false;
@@ -91,6 +88,8 @@ public class Api {
         String username;
         String password;
         boolean invalidPassword = true;
+        boolean showOptions = true;
+        String choice;
 
         System.out.println("Thank you for choosing to register for out bank.");
 
@@ -102,7 +101,7 @@ public class Api {
 
         System.out.println("Please provide a username to login with. (case-sensitive)");
         username = scanner.nextLine();
-        while(!customerService.isUniqueUsername(username)) {
+        while (!customerService.isUniqueUsername(username)) {
             System.out.println("Sorry, that username is already taken. Please try again. (case-sensitive)");
             username = scanner.nextLine();
         }
@@ -113,18 +112,29 @@ public class Api {
             System.out.println("To validate your password please type it again.");
             if (!password.equals(scanner.nextLine())) {
                 System.out.println("That did not match your original password. Please try again.");
-            }
-            else {
+            } else {
                 invalidPassword = false;
             }
         }
-        while(invalidPassword);
+        while (invalidPassword);
 
         System.out.println("\nPlease look over the information you provided.");
         System.out.println("First Name: " + firstName);
         System.out.println("Last Name: " + lastName);
         System.out.println("Username: " + username);
         System.out.println("Is this correct? (Y/N)");
+        choice = scanner.nextLine();
+
+        if (choice.compareToIgnoreCase("Y") == 0) {
+            Customer customer = new Customer(0, firstName, lastName, username, password);
+
+            customerService.registerUser(customer);
+
+            System.out.println("You are now able to login to your user account.\n");
+        }
+        else {
+            System.out.println("Please try making your account again.\n");
+        }
     }
 
 
@@ -138,8 +148,8 @@ public class Api {
             System.out.println("Please choose an option.");
             System.out.println("[1] View account(s)");
             System.out.println("[2] Open a new account");
-            System.out.println("[3] Delete an existing account");
-            System.out.println("[4] Exit the program");
+            System.out.println("[3] Delete User Account");
+            System.out.println("[4] Logout");
             choice = scanner.nextLine();
 
             switch (choice) {
@@ -152,7 +162,10 @@ public class Api {
                     break;
                 }
                 case "3": {
-                    deleteAccount(user);
+                    Boolean deleted = deleteUser(user);
+                    if(deleted){
+                        showOptions = false;
+                    }
                     break;
                 }
                 case "4": {
@@ -168,34 +181,204 @@ public class Api {
 
     static void accountView(Customer user){
         List<Account> accounts;
+        Account chosenAccount = null;
         boolean showOptions = true;
         String accountChoice;
 
         accounts = accountService.retrieveAccounts(user.getId());
 
         if(accounts.size() == 0){
-            System.out.println("You currently have no accounts. Please open a checking or savings account.");
+            System.out.println("You currently have no accounts. Please open a checking or savings account.\n");
             return;
         }
 
-        System.out.println("Here are you current accounts:");
-        for(int i = 0; i < accounts.size(); i++){
-            Account currentAccount = accounts.get(i);
-            System.out.println("[" + currentAccount.getAccountId() + "] " +
-                    currentAccount.getAccountType() + " " + currentAccount.getBalance());
-        }
-
         while(showOptions){
+            System.out.println("Here are you current accounts:");
+
+            for(int i = 0; i < accounts.size(); i++){
+                Account currentAccount = accounts.get(i);
+                System.out.println(currentAccount);
+            }
+
             System.out.println("Please choose an account by typing in the account's ID");
             accountChoice = scanner.nextLine();
+
+            for(int i = 0; i < accounts.size(); i++){
+                try {
+                    if (Integer.parseInt(accountChoice) == accounts.get(i).getAccountId()) {
+                        chosenAccount = accounts.get(i);
+                        break;
+                    }
+                }
+                catch (NumberFormatException e){
+                    break;
+                }
+            }
+
+            if(chosenAccount == null){
+                System.out.println("Invalid account choice.\n");
+            }
+            else{
+                accountOptions(chosenAccount);
+                showOptions = false;
+            }
         }
     }
 
-    static void createAccount(Customer user){
+    static void createAccount(Customer user) {
+        String choice;
 
+        System.out.println("What kind of account would you like to create? Choose which option");
+        System.out.println("[1] Checking");
+        System.out.println("[2] Savings");
+        System.out.println("[3] Cancel");
+        choice = scanner.nextLine();
+
+        switch (choice) {
+            case "1": {
+                Account newAccount = accountService.openAccount(new Account(0,
+                        user.getId(), "Checking", 0.00));
+                System.out.println("A checking account has successfully been added.");
+                break;
+            }
+            case "2": {
+                Account newAccount = accountService.openAccount(new Account(0,
+                        user.getId(), "Savings", 0.00));
+                System.out.println("A savings account has successfully been added.");
+                break;
+            }
+            case "3": {
+                return;
+            }
+            default: {
+                System.out.println("Invalid input. Please try again.\n");
+            }
+        }
     }
 
-    static void deleteAccount(Customer user){
+    static boolean deleteUser(Customer user){
+        double totalBalance = 0;
+        boolean deleted;
+        String choice;
+
+        System.out.println("Are you sure you want to delete your user account and" +
+                " close your current bank accounts? (Y/N)");
+        choice = scanner.nextLine();
+        if(choice.compareToIgnoreCase("Y") != 0){
+            return false;
+        }
+
+        System.out.println("One moment while we close your bank accounts before deleting your user accounts.");
+
+        List<Account> accounts = accountService.retrieveAccounts(user.getId());
+        for(int i = 0; i < accounts.size(); i++){
+            totalBalance = accounts.get(i).getBalance();
+            accountService.closeAccount(accounts.get(i));
+        }
+
+        deleted = customerService.deleteUser(user);
+        if(deleted){
+            System.out.println("The amount of: " + totalBalance + " will be mailed to your home address.");
+            System.out.println("You account has successfully been deleted.\n");
+            return true;
+        }
+        else{
+            System.out.println("There was an error in deleting your account. Please try again.");
+            return false;
+        }
+    }
+
+    static void accountOptions(Account account){
+        String choice;
+        Boolean showOptions = true;
+        Double difference;
+
+        while(showOptions) {
+            System.out.println(account);
+            System.out.println("What would you like to do with this account?");
+            System.out.println("[1] Withdraw");
+            System.out.println("[2] Deposit");
+            System.out.println("[3] View Transaction History");
+            System.out.println("[4] Delete Account");
+            System.out.println("[5] Exit");
+            choice = scanner.nextLine();
+
+            switch (choice) {
+                //Withdraw Option
+                case "1": {
+                    Boolean validInput = false;
+
+                    while(!validInput) {
+                        System.out.println(account);
+                        System.out.println("How much would you like to withdraw?");
+                        String amount = scanner.nextLine();
+
+                        try{
+                            difference = Double.parseDouble(amount);
+
+                            if(difference > account.getBalance()){
+                                System.out.println("You may not overdraft your account. Please try again.\n");
+                                break;
+                            }
+                            else if(difference >= 0.00){
+                                accountService.adjustBalance(account, -difference);
+                                validInput = true;
+                            }
+                            else{
+                                System.out.println("Not a valid input. Please enter " +
+                                        "a non-negative number in \"xx.xx\" format.\n");
+                            }
+                        }
+                        catch (NumberFormatException e){
+
+                        }
+                    }
+
+                    break;
+                }
+
+                //Deposit Option
+                case "2": {
+                    Boolean validInput = false;
+
+                    while(!validInput) {
+                        System.out.println(account);
+                        System.out.println("How much would you like to deposit?");
+                        String amount = scanner.nextLine();
+
+                        try{
+                            difference = Double.parseDouble(amount);
+
+                            if(difference >= 0.00){
+                                accountService.adjustBalance(account, difference);
+                                validInput = true;
+                            }
+                            else{
+                                System.out.println("Not a valid input. Please enter " +
+                                        "a non-negative number in \"xx.xx\" format.\n");
+                            }
+                        }
+                        catch (NumberFormatException e){
+                            System.out.println("Not a valid input. Please enter " +
+                                    "a non-negative number in \"xx.xx\" format.\n");
+                        }
+                    }
+                    break;
+                }
+
+                case "3": {
+                    System.out.println("Here is a history of this account's previous transactions.");
+                    break;
+                }
+                case "4": {
+                    showOptions = false;
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid input. Please try again.\n");
+                }
+            }
+        }
 
     }
 }

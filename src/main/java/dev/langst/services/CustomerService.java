@@ -1,6 +1,8 @@
 package dev.langst.services;
 
+import dev.langst.entities.Account;
 import dev.langst.entities.Customer;
+import dev.langst.utilities.List;
 
 public interface CustomerService {
 
