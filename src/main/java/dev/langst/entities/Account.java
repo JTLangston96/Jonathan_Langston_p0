@@ -49,6 +49,6 @@ public class Account {
     @Override
     public String toString() {
         return "[" + this.getAccountId() + "] " +
-                this.getAccountType() + " " + this.getBalance();
+                this.getAccountType() + " " + String.format("%.2f", this.getBalance());
     }
 }
