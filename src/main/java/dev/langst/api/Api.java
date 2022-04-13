@@ -88,7 +88,6 @@ public class Api {
         String username;
         String password;
         boolean invalidPassword = true;
-        boolean showOptions = true;
         String choice;
 
         System.out.println("Thank you for choosing to register for out bank.");
@@ -122,10 +121,10 @@ public class Api {
         System.out.println("First Name: " + firstName);
         System.out.println("Last Name: " + lastName);
         System.out.println("Username: " + username);
-        System.out.println("Is this correct? (Y/N)");
+        System.out.println("Is this correct? [Y/N]");
         choice = scanner.nextLine();
 
-        if (choice.compareToIgnoreCase("Y") == 0) {
+        if (isInputYes(choice)) {
             Customer customer = new Customer(0, firstName, lastName, username, password);
 
             customerService.registerUser(customer);
@@ -136,8 +135,6 @@ public class Api {
             System.out.println("Please try making your account again.\n");
         }
     }
-
-
 
     static void userMenu(Customer user){
         String choice;
@@ -162,7 +159,7 @@ public class Api {
                     break;
                 }
                 case "3": {
-                    Boolean deleted = deleteUser(user);
+                    boolean deleted = deleteUser(user);
                     if(deleted){
                         showOptions = false;
                     }
@@ -194,11 +191,7 @@ public class Api {
 
         while(showOptions){
             System.out.println("Here are you current accounts:");
-
-            for(int i = 0; i < accounts.size(); i++){
-                Account currentAccount = accounts.get(i);
-                System.out.println(currentAccount);
-            }
+            System.out.println(accounts.toString());
 
             System.out.println("Please choose an account by typing in the account's ID");
             accountChoice = scanner.nextLine();
@@ -262,19 +255,15 @@ public class Api {
         String choice;
 
         System.out.println("Are you sure you want to delete your user account and" +
-                " close your current bank accounts? (Y/N)");
+                " close your current bank accounts? [Y/N]");
         choice = scanner.nextLine();
-        if(choice.compareToIgnoreCase("Y") != 0){
+        if(!isInputYes(choice)){
             return false;
         }
 
         System.out.println("One moment while we close your bank accounts before deleting your user accounts.");
 
-        List<Account> accounts = accountService.retrieveAccounts(user.getId());
-        for(int i = 0; i < accounts.size(); i++){
-            totalBalance = accounts.get(i).getBalance();
-            accountService.closeAccount(accounts.get(i));
-        }
+        totalBalance = accountService.deleteAllAccountsByUserId(user.getId());
 
         deleted = customerService.deleteUser(user);
         if(deleted){
@@ -283,15 +272,15 @@ public class Api {
             return true;
         }
         else{
-            System.out.println("There was an error in deleting your account. Please try again.");
+            System.out.println("There was an error in deleting your account. Please contact support.\n");
             return false;
         }
     }
 
     static void accountOptions(Account account){
         String choice;
-        Boolean showOptions = true;
-        Double difference;
+        boolean showOptions = true;
+        double difference;
 
         while(showOptions) {
             System.out.println(account);
@@ -306,7 +295,7 @@ public class Api {
             switch (choice) {
                 //Withdraw Option
                 case "1": {
-                    Boolean validInput = false;
+                    boolean validInput = false;
 
                     while(!validInput) {
                         System.out.println(account);
@@ -330,7 +319,8 @@ public class Api {
                             }
                         }
                         catch (NumberFormatException e){
-
+                            System.out.println("Not a valid input. Please enter " +
+                                    "a non-negative number in \"xx.xx\" format.\n");
                         }
                     }
 
@@ -339,7 +329,7 @@ public class Api {
 
                 //Deposit Option
                 case "2": {
-                    Boolean validInput = false;
+                    boolean validInput = false;
 
                     while(!validInput) {
                         System.out.println(account);
@@ -365,12 +355,30 @@ public class Api {
                     }
                     break;
                 }
-
+                //Transaction History
                 case "3": {
                     System.out.println("Here is a history of this account's previous transactions.");
                     break;
                 }
+                //Delete Option
                 case "4": {
+                    System.out.println("Are you sure you want to delete the account? [Y/N]");
+                    choice = scanner.nextLine();
+                    if(choice.compareToIgnoreCase("Y") != 0){
+                        break;
+                    }
+                    boolean deleted = accountService.closeAccount(account);
+                    if(deleted){
+                        System.out.println("Your account has successfully been closed.\n");
+                        showOptions = false;
+                    }
+                    else{
+                        System.out.println("There was an error in closing your account.\n");
+                    }
+
+                    break;
+                }
+                case "5": {
                     showOptions = false;
                     break;
                 }
@@ -380,5 +388,12 @@ public class Api {
             }
         }
 
+    }
+
+    static boolean isInputYes(String string){
+        if (string.compareToIgnoreCase("Y") == 0) {
+            return true;
+        }
+        return false;
     }
 }

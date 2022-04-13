@@ -96,10 +96,11 @@ public class AccountDAOPostgres implements AccountDAO {
 
         try{
             Connection conn = ConnectionUtil.createConnection();
-            String sql = "update account set balance = ?";
+            String sql = "update account set balance = ? where account_id = ?";
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             ps.setDouble(1, account.getBalance());
+            ps.setInt(2, account.getAccountId());
             ps.execute();
 
             ResultSet rs = ps.getGeneratedKeys();
