@@ -5,6 +5,8 @@ import dev.langst.data.CustomerDAO;
 import dev.langst.entities.Account;
 import dev.langst.entities.Customer;
 import dev.langst.utilities.List;
+import dev.langst.utilities.LogLevel;
+import dev.langst.utilities.Logger;
 
 public class CustomerServiceImpl implements CustomerService {
 
@@ -18,6 +20,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer registerUser(Customer customer) {
+
+        Logger.log("The user with the ID: " + customer.getId() + "has been created.", LogLevel.INFO);
         return customerDAO.createCustomer(customer);
     }
 
@@ -37,6 +41,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public boolean deleteUser(Customer customer) {
 
+        Logger.log("The user with the ID: " + customer.getId() + "has been deleted.", LogLevel.INFO);
         return customerDAO.deleteCustomerById(customer.getId());
     }
 

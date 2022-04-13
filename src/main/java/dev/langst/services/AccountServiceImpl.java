@@ -3,6 +3,8 @@ package dev.langst.services;
 import dev.langst.data.AccountDAO;
 import dev.langst.entities.Account;
 import dev.langst.utilities.List;
+import dev.langst.utilities.LogLevel;
+import dev.langst.utilities.Logger;
 
 public class AccountServiceImpl implements AccountService{
 
@@ -14,11 +16,15 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public Account openAccount(Account account) {
+
+        Logger.log("The account with the ID: " + account.getAccountId() + "has been created.", LogLevel.INFO);
         return accountDAO.createAccount(account);
     }
 
     @Override
     public boolean closeAccount(Account account) {
+
+        Logger.log("The account with the ID: " + account.getAccountId() + "has been deleted.", LogLevel.INFO);
         return accountDAO.deleteAccountById(account.getAccountId());
     }
 

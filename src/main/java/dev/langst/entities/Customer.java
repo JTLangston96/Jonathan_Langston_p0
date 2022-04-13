@@ -6,8 +6,6 @@ public class Customer {
     private String lastName;
     private String userName;
     private String password;
-    private int checkingAccount;
-    private int savingsAccount;
 
     public Customer(int id, String firstName, String lastName, String userName, String password){
         this.id = id;
@@ -55,22 +53,6 @@ public class Customer {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public int getCheckingAccount() {
-        return checkingAccount;
-    }
-
-    public void setCheckingAccount(int checkingAccount) {
-        this.checkingAccount = checkingAccount;
-    }
-
-    public int getSavingsAccount() {
-        return savingsAccount;
-    }
-
-    public void setSavingsAccount(int savingsAccount) {
-        this.savingsAccount = savingsAccount;
     }
 
 }
