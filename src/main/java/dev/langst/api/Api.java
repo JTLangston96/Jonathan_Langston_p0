@@ -287,9 +287,8 @@ public class Api {
             System.out.println("What would you like to do with this account?");
             System.out.println("[1] Withdraw");
             System.out.println("[2] Deposit");
-            System.out.println("[3] View Transaction History");
-            System.out.println("[4] Delete Account");
-            System.out.println("[5] Exit");
+            System.out.println("[3] Delete Account");
+            System.out.println("[4] Exit");
             choice = scanner.nextLine();
 
             switch (choice) {
@@ -355,13 +354,8 @@ public class Api {
                     }
                     break;
                 }
-                //Transaction History
-                case "3": {
-                    System.out.println("Here is a history of this account's previous transactions.");
-                    break;
-                }
                 //Delete Option
-                case "4": {
+                case "3": {
                     System.out.println("Are you sure you want to delete the account? [Y/N]");
                     choice = scanner.nextLine();
                     if(choice.compareToIgnoreCase("Y") != 0){
@@ -378,7 +372,7 @@ public class Api {
 
                     break;
                 }
-                case "5": {
+                case "4": {
                     showOptions = false;
                     break;
                 }

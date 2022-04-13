@@ -79,16 +79,14 @@ public class CustomerDAOPostgres implements CustomerDAO {
 
             Connection conn = ConnectionUtil.createConnection();
             String sql  = "update customer set first_name = ?, last_name = ?, username = ?, " +
-                    "password = ?, checking_account = ?, savings_account = ? where customer_id = ?;";
+                    "password = ? where customer_id = ?;";
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             ps.setString(1, customer.getFirstName());
             ps.setString(2, customer.getLastName());
             ps.setString(3, customer.getUserName());
             ps.setString(4, customer.getPassword());
-            ps.setInt(5, customer.getCheckingAccount());
-            ps.setInt(6, customer.getSavingsAccount());
-            ps.setInt(7, customer.getId());
+            ps.setInt(5, customer.getId());
             ps.execute();
 
             ResultSet rs = ps.getGeneratedKeys();
