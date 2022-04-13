@@ -12,4 +12,6 @@ public interface AccountService {
     Account adjustBalance(Account account, double difference);
 
     List<Account> retrieveAccounts(int userId);
+
+    double deleteAllAccountsByUserId(int id);
 }

@@ -43,5 +43,20 @@ public class AccountServiceImpl implements AccountService{
         return accounts;
     }
 
+    @Override
+    public double deleteAllAccountsByUserId(int id) {
+        double remainingAmount = 0.00;
+        List<Account> accounts = accountDAO.getAccountsByUserId(id);
+
+        for(int i = 0; i < accounts.size(); i++){
+            remainingAmount += accounts.get(i).getBalance();
+            if(!accountDAO.deleteAccountById(accounts.get(i).getAccountId())){
+                return -1;
+            }
+        }
+
+        return remainingAmount;
+    }
+
 
 }

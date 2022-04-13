@@ -67,14 +67,13 @@ public class AccountDAOPostgres implements AccountDAO {
             Arraylist<Account> accounts = new Arraylist();
 
             Connection conn = ConnectionUtil.createConnection();
-            String sql = "select account_id, account_type, balance from account inner join customer on customer.customer_id = ?;";
+            String sql = "select account_id, account_type, balance from account where customer_id = ?";
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             ps.setInt(1, userId);
             ps.execute();
 
             ResultSet rs = ps.getResultSet();
-            rs.next();
 
             for(int i = 0; rs.next(); i++){
                 Account currentAccount = new Account(rs.getInt("account_id"), userId,
@@ -97,10 +96,11 @@ public class AccountDAOPostgres implements AccountDAO {
 
         try{
             Connection conn = ConnectionUtil.createConnection();
-            String sql = "update account set balance = ?";
+            String sql = "update account set balance = ? where account_id = ?";
             PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
             ps.setDouble(1, account.getBalance());
+            ps.setInt(2, account.getAccountId());
             ps.execute();
 
             ResultSet rs = ps.getGeneratedKeys();

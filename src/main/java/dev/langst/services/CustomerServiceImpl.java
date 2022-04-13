@@ -1,14 +1,19 @@
 package dev.langst.services;
 
+import dev.langst.data.AccountDAO;
 import dev.langst.data.CustomerDAO;
+import dev.langst.entities.Account;
 import dev.langst.entities.Customer;
+import dev.langst.utilities.List;
 
 public class CustomerServiceImpl implements CustomerService {
 
     private CustomerDAO customerDAO;
+    private AccountDAO accountDAO;
 
     public CustomerServiceImpl(CustomerDAO customerDAO){
         this.customerDAO = customerDAO;
+        this.accountDAO = accountDAO;
     }
 
     @Override
@@ -31,6 +36,7 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public boolean deleteUser(Customer customer) {
+
         return customerDAO.deleteCustomerById(customer.getId());
     }
 

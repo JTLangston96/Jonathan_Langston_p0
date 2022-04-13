@@ -1,9 +1,12 @@
 package dev.langst.servicestests;
 
+import dev.langst.entities.Account;
+import dev.langst.entities.AccountDAOPostgres;
 import dev.langst.entities.Customer;
 import dev.langst.entities.CustomerDAOPostgres;
 import dev.langst.services.CustomerService;
 import dev.langst.services.CustomerServiceImpl;
+import dev.langst.utilities.List;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 
@@ -50,6 +53,7 @@ public class CustomerServiceTests {
 
         Assertions.assertEquals(newName, customer.getFirstName());
     }
+
     @Test
     @Order(4)
     void unique_username_test(){

@@ -32,4 +32,15 @@ public class Arraylist<T> implements List<T>{
     public int size() {
         return this.index;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        for(int i = 0; i < this.index; i++){
+            sb.append(this.elements[i].toString());
+            sb.append("\n");
+        }
+        return sb.toString();
+    }
 }
